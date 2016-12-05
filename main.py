@@ -56,4 +56,14 @@ if __name__ == '__main__':
 
         print 'listen port:', list_port
 
+        # send our tcp listen port
+        # pack data version
+        ver = struct.pack('!I', NETWORK_DATA_VERSION)
+        # pack cmd
+        cmd = struct.pack('!I', CMD_REPORT_PC_MONITOR_PORT)
+        # pack port
+        l_port = struct.pack('!I', TCP_SERVER_PORT)
+
+        s.sendto(ver + cmd + l_port, (addr[0], list_port))
+
     s.close()
