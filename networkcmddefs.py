@@ -13,9 +13,10 @@ NETWORK_DATA_VERSION = 1
 
 
 ###################### Phone -> PC ############################
-CMD_REPORT_PHONE_BROAD_MONITOR_PORT = 1
-CMD_MAKE_PHONE_BROAD_MONITOR_EXIT   = 2
+CMD_PHONE_ONLINE            = 1
+CMD_PHONE_OFFLINE           = 2
 
 
 ###################### PC-> Phone #############################
-CMD_REPORT_PC_MONITOR_PORT = 1
+CMD_PC_ONLINE               = 1
+CMD_PC_OFFLINE              = 2

@@ -4,66 +4,41 @@
 __author__ = 'weichen2046@gmail.com'
 
 
+import logging
+import logging.config
+import os
 import socket
 import struct
+from twisted.internet import reactor
 
+import settings
 from networkcmddefs import *
+from udpserver import PcUDPProtocol
 
 
-if __name__ == '__main__':
+def init_logging():
+    log_dir = os.path.join(settings.BASE_DIR, 'logs')
+    if not os.path.isdir(log_dir):
+        os.makedirs(log_dir)
+    logging.config.dictConfig(settings.LOGGING)
+
+
+def run():
 
     host = ''
     port = 4555
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    reactor.listenUDP(port, PcUDPProtocol())
+    reactor.run()
 
-    s.bind((host, port))
 
-    data, addr = s.recvfrom(4096)
-    print 'recv broadcast,', 'addr:', addr
+if __name__ == '__main__':
 
-    curr_index = 0
-    int_size = struct.calcsize('!I')
-    # parse version
-    version = struct.unpack('!I', data[curr_index:curr_index+int_size])
-    if version:
-        version = version[0]
-    else:
-        raise Exception('Can not parse data version')
 
-    print 'version:', version
+    init_logging()
 
-    # parse command
-    curr_index += int_size
-    cmd = struct.unpack('!I', data[curr_index:curr_index+int_size])
-    if cmd:
-        cmd = cmd[0]
-    else:
-        raise Exception('Can not parse cmd')
+    logging.debug('pc online...')
 
-    print 'cmd:', cmd
+    run()
 
-    if cmd == CMD_REPORT_PHONE_BROAD_MONITOR_PORT:
-        # parse listen port
-        curr_index += int_size
-        list_port = struct.unpack('!I', data[curr_index:curr_index+int_size])
-        if list_port:
-            list_port = list_port[0]
-        else:
-            raise Exception('Can not parse listen port')
-
-        print 'listen port:', list_port
-
-        # send our tcp listen port
-        # pack data version
-        ver = struct.pack('!I', NETWORK_DATA_VERSION)
-        # pack cmd
-        cmd = struct.pack('!I', CMD_REPORT_PC_MONITOR_PORT)
-        # pack port
-        l_port = struct.pack('!I', TCP_SERVER_PORT)
-
-        s.sendto(ver + cmd + l_port, (addr[0], list_port))
-
-    s.close()
+    logging.debug('pc offline...')
