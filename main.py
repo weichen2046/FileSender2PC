@@ -9,10 +9,11 @@ import logging.config
 import os
 import socket
 import struct
-from twisted.internet import reactor
+from twisted.internet import reactor, protocol
 
 import settings
 from networkcmddefs import *
+from tcpserver.tcpserver import PcTCPProtocol
 from udpserver import PcUDPProtocol
 
 
@@ -29,6 +30,11 @@ def run():
     port = 4555
 
     reactor.listenUDP(port, PcUDPProtocol())
+
+    factory = protocol.ServerFactory()
+    factory.protocol = PcTCPProtocol
+    reactor.listenTCP(TCP_SERVER_PORT, factory)
+
     reactor.run()
 
 

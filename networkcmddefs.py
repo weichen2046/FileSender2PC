@@ -15,6 +15,7 @@ NETWORK_DATA_VERSION = 1
 ###################### Phone -> PC ############################
 CMD_PHONE_ONLINE            = 1
 CMD_PHONE_OFFLINE           = 2
+CMD_SEND_FILE               = 3
 
 
 ###################### PC-> Phone #############################
